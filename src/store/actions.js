@@ -32,7 +32,9 @@ export default {
       });
 
       const { rates, date } = response.data;
-      const toAmount = rates[toCurrency] * parseInt(state.fromAmount, 10);
+      const toAmount = (
+        rates[toCurrency] * parseFloat(state.fromAmount)
+      ).toFixed(2);
 
       commit("SET_CONVERSION", {
         fromCurrency,

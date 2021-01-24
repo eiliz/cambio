@@ -1,14 +1,6 @@
 <template>
-  <div class="exchanger bg-white rounded-lg mx-auto p-6 my-6 shadow-sm">
-    <date-picker
-      v-model="conversionDate"
-      @change="makeConversion"
-      :clearable="false"
-      :disabled-date="disableDatesFromTomorrow"
-      valueType="format"
-    ></date-picker>
-
-    <div class="flex">
+  <div class="bg-white rounded-lg mx-auto p-6 mb-6 shadow-sm">
+    <div class="flex flex-wrap justify-between">
       <div class="exchanger__currency mr-6">
         <label class="text-gray-500 text-xs">From</label>
         <div class="flex">
@@ -73,6 +65,15 @@
     </div>
 
     <slot></slot>
+
+    <date-picker
+      v-model="conversionDate"
+      @change="makeConversion"
+      :clearable="false"
+      :disabled-date="disableDatesFromTomorrow"
+      valueType="format"
+      class="block ml-auto w-32"
+    ></date-picker>
   </div>
 </template>
 

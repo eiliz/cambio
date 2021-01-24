@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg mx-auto p-6 my-6 shadow-sm">
+  <div class="bg-white rounded-lg mx-auto p-6 shadow-sm">
     <LineChart
       ref="chart"
       v-if="loaded"

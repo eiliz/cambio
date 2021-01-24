@@ -9,7 +9,7 @@ export default {
     state.rate = rate;
   },
   SET_REVERSE_CONVERSION(state) {
-    state.fromAmount = state.toAmount / state.rate;
+    state.fromAmount = (parseFloat(state.toAmount) / state.rate).toFixed(2);
   },
   SET_STATUS(state, status) {
     state.status = status;
