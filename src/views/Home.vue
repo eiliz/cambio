@@ -1,18 +1,37 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div class="">
+    <converter></converter>
+    <converter-result
+      v-if="isSuccess"
+      :data="conversionResult"
+    ></converter-result>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import { mapActions, mapGetters } from "vuex";
+import Converter from "@/components/Converter";
+import ConverterResult from "@/components/ConverterResult";
 
 export default {
   name: "Home",
-  components: {
-    HelloWorld
+  components: { Converter, ConverterResult },
+  data() {
+    return {
+      rates: null
+    };
+  },
+  computed: {
+    ...mapGetters(["isSuccess", "conversionResult"])
+  },
+  created() {
+    this.fetchAllSupportedCurrencies();
+  },
+  methods: {
+    ...mapActions(["fetchAllSupportedCurrencies"]),
+    async getRate() {
+      this.rates = await this.$currencyService.getLatestRatesForCurrency("RON");
+    }
   }
 };
 </script>

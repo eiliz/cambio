@@ -1,0 +1,67 @@
+@import "~vue-select/dist/vue-select.css";
+
+.adyen {
+  &.v-select {
+    @apply flex;
+    @apply w-36;
+    @apply h-10;
+    @apply px-4;
+    @apply border-2 border-gray-200;
+    @apply rounded;
+    @apply font-bold;
+  }
+
+  &.vs--open {
+    @apply border-2 border-green-500;
+  }
+
+  .adyen__flag {
+    @apply mr-2;
+  }
+
+  .vs__selected {
+    padding: 0;
+    min-width: 60px;
+  }
+
+  .vs__dropdown-toggle {
+    @apply border-0;
+    @apply justify-between;
+    @apply w-full;
+  }
+
+  .vs__selected-options {
+    flex-wrap: nowrap;
+  }
+
+  &.vs--single.vs--open .vs__selected {
+    position: relative;
+    opacity: 1;
+    @apply text-green-500;
+  }
+
+  .vs__clear {
+    display: none;
+  }
+
+  .vs__actions {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    padding-right: 5px;
+    padding-top: 5px;
+  }
+
+  .vs__search {
+    width: 0;
+    height: 0;
+    position: absolute;
+    opacity: 0;
+  }
+
+  .vs__dropdown-option {
+    display: flex;
+    align-items: center;
+    padding: 6px 20px;
+  }
+}
