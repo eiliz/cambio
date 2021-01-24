@@ -1,21 +1,25 @@
 <template>
-  <div class="">
-    <converter></converter>
-    <converter-result
-      v-if="isSuccess"
-      :data="conversionResult"
-    ></converter-result>
+  <div>
+    <converter>
+      <converter-results
+        v-if="isSuccess"
+        :data="conversionResult"
+      ></converter-results
+    ></converter>
+
+    <currency-rates-chart></currency-rates-chart>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 import Converter from "@/components/Converter";
-import ConverterResult from "@/components/ConverterResult";
+import ConverterResults from "@/components/ConverterResults";
+import CurrencyRatesChart from "@/components/CurrencyRatesChart";
 
 export default {
   name: "Home",
-  components: { Converter, ConverterResult },
+  components: { Converter, ConverterResults, CurrencyRatesChart },
   data() {
     return {
       rates: null

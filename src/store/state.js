@@ -11,5 +11,5 @@ export default {
   toAmount: 1,
   rate: 1,
   date: format(new Date(), "yyyy-MM-dd"),
-  currencyChartData: {}
+  chartData: {}
 };

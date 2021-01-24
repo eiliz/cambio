@@ -7,14 +7,24 @@ const endpoints = {
 
 const getAllRatesForBaseCurrency = () => httpClient.get(endpoints.latest);
 
-const getRateForSymbols = ({ base, date }) =>
+const getRates = ({ base, date }) =>
   httpClient.get(date, {
     params: {
       base
     }
   });
 
+const getRatesForPeriod = ({ base, startAt, endAt }) =>
+  httpClient.get(endpoints.forPeriod, {
+    params: {
+      base,
+      start_at: startAt,
+      end_at: endAt
+    }
+  });
+
 export default {
   getAllRatesForBaseCurrency,
-  getRateForSymbols
+  getRates,
+  getRatesForPeriod
 };

@@ -22,5 +22,8 @@ export default {
   },
   SET_DATE(state, date) {
     state.date = date;
+  },
+  SET_CHART_DATA(state, payload) {
+    state.chartData = payload;
   }
 };

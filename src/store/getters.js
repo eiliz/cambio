@@ -31,5 +31,8 @@ export default {
   },
   isError(state) {
     return state.status === "ERROR";
+  },
+  chartData(state) {
+    return state.chartData;
   }
 };
