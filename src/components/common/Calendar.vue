@@ -30,4 +30,11 @@ export default {
 };
 </script>
 
-<style src="vue2-datepicker/index.css"></style>
+<style>
+@import "~vue2-datepicker/index.css";
+
+.mx-datepicker {
+  @apply w-32;
+  @apply block;
+}
+</style>

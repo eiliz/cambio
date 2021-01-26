@@ -28,5 +28,12 @@ export default {
   },
   SET_CHART_STATUS(state, status) {
     state.chart.status = status;
+  },
+  SET_FAVORITES(state, payload) {
+    state.favorites.add(payload);
+    localStorage.setItem(
+      "cambioFavorites",
+      JSON.stringify([...state.favorites])
+    );
   }
 };

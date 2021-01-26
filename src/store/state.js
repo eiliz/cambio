@@ -1,4 +1,4 @@
-import status from "../status";
+import apiStatus from "@/api/constants/apiStatus";
 import { format } from "date-fns";
 
 export default {
@@ -11,7 +11,8 @@ export default {
   rate: 1,
   date: format(new Date(), "yyyy-MM-dd"),
   chart: {
-    status: status.initial,
+    status: apiStatus.INITIAL,
     data: null
-  }
+  },
+  favorites: new Set()
 };

@@ -1,17 +1,24 @@
 <template>
   <div class="bg-white rounded-lg mx-auto p-6 shadow-sm">
     <LineChart
-      v-if="chartDataCompleted"
+      v-if="isChartDataLoaded"
       ref="chart"
       :chart-data="datacollection"
       :height="200"
     ></LineChart>
 
-    <div v-if="chartDataLoading">Loading</div>
+    <div v-if="isChartPending" class="flex justify-center">
+      <base-spinner></base-spinner>
+    </div>
+
+    <div v-if="isChartFailed" class="flex justify-center">
+      There was a problem with your request
+    </div>
   </div>
 </template>
 
 <script>
+import apiStatus from "@/api/constants/apiStatus";
 import { mapGetters } from "vuex";
 import LineChart from "@/components/LineChart";
 import resolveConfig from "tailwindcss/resolveConfig";
@@ -31,12 +38,16 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      "chartData",
-      "chartDataLoading",
-      "chartDataCompleted",
-      "chartDataFailed"
-    ])
+    ...mapGetters(["chartData", "chartStatus"]),
+    isChartDataLoaded() {
+      return this.chartStatus === apiStatus.SUCCESS;
+    },
+    isChartPending() {
+      return this.chartStatus === apiStatus.PENDING;
+    },
+    isChartFailed() {
+      return this.chartStatus === apiStatus.ERROR;
+    }
   },
   mounted() {
     this.updateChart();

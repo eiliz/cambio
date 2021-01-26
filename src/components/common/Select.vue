@@ -14,6 +14,7 @@
     </template>
   </v-select>
 </template>
+
 <script>
 import vSelect from "vue-select";
 

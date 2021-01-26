@@ -4,38 +4,26 @@
       <h2 class="flex text-xl text-green-500">
         <Star /><span class="ml-2">Favorites</span>
       </h2>
-      <ul>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
+      <!-- <ul v-if="hasFavorites">
+        <li v-for="(fav, i) in getFavorites" :key="i">{{ favorite.label }}</li>
       </ul>
-    </div>
-
-    <div>
-      <h2 class="flex text-xl text-green-500">
-        <Clock /><span class="ml-2">History</span>
-      </h2>
-      <ul>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-        <li>EUR - USD</li>
-      </ul>
+      <p v-else>
+        You don't have any favorites yet. Click the star icon to add one.
+      </p> -->
     </div>
   </div>
 </template>
 
 <script>
-import Clock from "@/assets/svg/clock.svg";
+import { mapGetters } from "vuex";
 import Star from "@/assets/svg/star.svg";
 
 export default {
   components: {
-    Clock,
     Star
+  },
+  computed: {
+    ...mapGetters(["getFavorites", "hasFavorites"])
   }
 };
 </script>

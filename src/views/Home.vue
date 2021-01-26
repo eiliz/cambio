@@ -1,10 +1,7 @@
 <template>
   <div>
     <converter>
-      <converter-results
-        v-if="isSuccess"
-        :data="conversionResult"
-      ></converter-results
+      <converter-results :data="conversionResult"></converter-results
     ></converter>
 
     <currency-rates-chart></currency-rates-chart>
@@ -26,7 +23,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isSuccess", "conversionResult"])
+    ...mapGetters(["conversionResult"])
   },
   created() {
     this.fetchAllSupportedCurrencies();

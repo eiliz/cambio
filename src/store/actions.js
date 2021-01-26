@@ -1,5 +1,5 @@
 import currencyApi from "@/api/currencyApi";
-import status from "@/status";
+import apiStatus from "@/api/constants/apiStatus";
 
 const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function(mon) {
   return new Date(2000, mon).toLocaleString({}, { month: "short" });
@@ -57,7 +57,7 @@ export default {
   },
   async fetchDataForChart({ commit }, { fromCurrency, toCurrency }) {
     try {
-      commit("SET_CHART_STATUS", status.loading);
+      commit("SET_CHART_STATUS", apiStatus.PENDING);
 
       let pastDate = new Date();
       pastDate.setDate(pastDate.getDate() - 7);
@@ -96,12 +96,16 @@ export default {
 
       setTimeout(() => {
         commit("SET_CHART_DATA", sortedChartData);
-        commit("SET_CHART_STATUS", status.completed);
-      }, 1500);
+        commit("SET_CHART_STATUS", apiStatus.SUCCESS);
+      }, 2500);
     } catch (error) {
       commit("SET_CHART_DATA", null);
-      commit("SET_CHART_STATUS", status.failed);
+      commit("SET_CHART_STATUS", apiStatus.ERROR);
       console.log(error);
     }
+  },
+  makeFavorite({ commit }, payload) {
+    const stringPayload = JSON.stringify(payload);
+    commit("SET_FAVORITES", stringPayload);
   }
 };

@@ -3,16 +3,13 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
-import currencyApi from "@/plugins/currencyApi";
-
+import "@/plugins/currencyApi";
 import "@/assets/css/main.css";
 
 import { registerBaseComponents } from "@/helpers/registerBaseComponents";
 registerBaseComponents(Vue);
 
 Vue.config.productionTip = false;
-
-Vue.use(currencyApi);
 
 new Vue({
   router,

@@ -1,5 +1,3 @@
-import status from "@/status";
-
 export default {
   currencies(state) {
     return state.currencies;
@@ -22,28 +20,16 @@ export default {
       date
     };
   },
-  isInitial(state) {
-    return state.status === "INTIAL";
-  },
-  isLoading(state) {
-    return state.status === "LOADING";
-  },
-  isSuccess(state) {
-    return state.status === "SUCCESS";
-  },
-  isError(state) {
-    return state.status === "ERROR";
-  },
   chartData(state) {
     return state.chart.data;
   },
-  chartDataCompleted(state) {
-    return state.chart.status === status.completed;
+  chartStatus(state) {
+    return state.chart.status;
   },
-  chartDataLoading(state) {
-    return state.chart.status === status.loading;
+  getFavorites(state) {
+    return state.getFavorites;
   },
-  chartDataFailed(state) {
-    return state.chart.status === status.failed;
+  hasFavorites(state) {
+    return state.favorites && state.favorites.length > 0;
   }
 };
