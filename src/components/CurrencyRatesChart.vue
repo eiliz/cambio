@@ -1,11 +1,13 @@
 <template>
   <div class="bg-white rounded-lg mx-auto p-6 shadow-sm">
     <LineChart
+      v-if="chartDataCompleted"
       ref="chart"
-      v-if="loaded"
       :chart-data="datacollection"
       :height="200"
     ></LineChart>
+
+    <div v-if="chartDataLoading">Loading</div>
   </div>
 </template>
 
@@ -25,20 +27,23 @@ export default {
   data() {
     return {
       datacollection: null,
-      data: [],
-      loaded: false
+      data: []
     };
   },
   computed: {
-    ...mapGetters(["chartData"])
+    ...mapGetters([
+      "chartData",
+      "chartDataLoading",
+      "chartDataCompleted",
+      "chartDataFailed"
+    ])
   },
   mounted() {
     this.updateChart();
   },
   watch: {
-    chartData(result) {
-      this.data = result;
-      this.loaded = true;
+    chartData(payload) {
+      this.data = payload;
       this.updateChart();
     }
   },

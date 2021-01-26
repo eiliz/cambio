@@ -1,5 +1,5 @@
-import currencyService from "@/api/currencyService";
-import statuses from "./statuses";
+import currencyApi from "@/api/currencyApi";
+import status from "@/status";
 
 const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function(mon) {
   return new Date(2000, mon).toLocaleString({}, { month: "short" });
@@ -10,7 +10,7 @@ export default {
     try {
       const {
         data: { base, rates }
-      } = await currencyService.getAllRatesForBaseCurrency();
+      } = await currencyApi.getAllRatesForBaseCurrency();
 
       // The default base currency is not included in the rates payload so we
       // have to merge it in the array of currencies
@@ -26,7 +26,7 @@ export default {
     { fromCurrency, toCurrency }
   ) {
     try {
-      const response = await currencyService.getRates({
+      const response = await currencyApi.getRates({
         base: fromCurrency,
         date: state.date
       });
@@ -44,8 +44,6 @@ export default {
         date
       });
 
-      commit("SET_STATUS", statuses.success);
-
       dispatch("fetchDataForChart", {
         fromCurrency,
         toCurrency
@@ -56,11 +54,11 @@ export default {
   },
   reverseConversion({ commit }) {
     commit("SET_REVERSE_CONVERSION");
-
-    commit("SET_STATUS", statuses.success);
   },
   async fetchDataForChart({ commit }, { fromCurrency, toCurrency }) {
     try {
+      commit("SET_CHART_STATUS", status.loading);
+
       let pastDate = new Date();
       pastDate.setDate(pastDate.getDate() - 7);
       let date = new Date();
@@ -73,7 +71,7 @@ export default {
 
       const {
         data: { rates }
-      } = await currencyService.getRatesForPeriod({
+      } = await currencyApi.getRatesForPeriod({
         base: fromCurrency,
         startAt: oneWeekAgo,
         endAt: currentDate
@@ -96,8 +94,13 @@ export default {
         return new Date(a.date) - new Date(b.date);
       });
 
-      commit("SET_CHART_DATA", sortedChartData);
+      setTimeout(() => {
+        commit("SET_CHART_DATA", sortedChartData);
+        commit("SET_CHART_STATUS", status.completed);
+      }, 1500);
     } catch (error) {
+      commit("SET_CHART_DATA", null);
+      commit("SET_CHART_STATUS", status.failed);
       console.log(error);
     }
   }

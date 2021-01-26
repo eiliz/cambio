@@ -23,7 +23,10 @@ export default {
   SET_DATE(state, date) {
     state.date = date;
   },
-  SET_CHART_DATA(state, payload) {
-    state.chartData = payload;
+  SET_CHART_DATA(state, data) {
+    state.chart.data = data;
+  },
+  SET_CHART_STATUS(state, status) {
+    state.chart.status = status;
   }
 };

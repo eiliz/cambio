@@ -1,19 +1,26 @@
 <template>
   <div class="bg-white rounded-lg mx-auto p-6 mb-6 shadow-sm">
+    <calendar
+      v-model="conversionDate"
+      @change="makeConversionDebounced"
+      :disabled-date="disableDatesFromTomorrow"
+      class="block ml-auto w-32"
+    ></calendar>
+
     <div class="flex flex-wrap justify-between">
       <div class="exchanger__currency mr-6">
         <label class="text-gray-500 text-xs">From</label>
         <div class="flex">
-          <input
-            type="text"
+          <base-input
             v-model="fromAmount"
-            @keyup="makeConversion"
-            class="border-2 border-gray-200 rounded px-4 font-bold h-10 mb-2 mr-2 w-36"
+            @keyup="makeConversionDebounced"
+            id="fromAmount"
           />
-          <v-select
+
+          <Select
             :options="currencies"
             v-model="fromCurrency"
-            @input="makeConversion"
+            @input="makeConversionDebounced"
             :searchable="false"
             class="adyen"
           >
@@ -28,23 +35,23 @@
               />
               {{ currency.label }}
             </template>
-          </v-select>
+          </Select>
         </div>
       </div>
 
       <div class="exchanger__currency">
         <label class="text-gray-500 text-xs">To</label>
         <div class="flex">
-          <input
-            type="text"
+          <base-input
             v-model="toAmount"
             @keyup="reverseConversion"
-            class="border-2 border-gray-200 rounded px-4 font-bold h-10 mb-2 mr-2 w-36"
+            id="fromAmount"
           />
-          <v-select
+
+          <Select
             :options="currencies"
             v-model="toCurrency"
-            @input="makeConversion"
+            @input="makeConversionDebounced"
             :searchable="false"
             class="adyen"
           >
@@ -59,28 +66,26 @@
               />
               {{ currency.label }}
             </template>
-          </v-select>
+          </Select>
         </div>
       </div>
     </div>
 
     <slot></slot>
-
-    <date-picker
-      v-model="conversionDate"
-      @change="makeConversion"
-      :clearable="false"
-      :disabled-date="disableDatesFromTomorrow"
-      valueType="format"
-      class="block ml-auto w-32"
-    ></date-picker>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import debounce from "lodash.debounce";
+import Select from "@/components/common/Select";
+import Calendar from "@/components/common/Calendar";
 
 export default {
+  components: {
+    Select,
+    Calendar
+  },
   data() {
     return {
       date: null,
@@ -120,6 +125,9 @@ export default {
   },
   methods: {
     ...mapActions(["convertCurrency", "reverseConversion"]),
+    makeConversionDebounced: debounce(function() {
+      this.makeConversion();
+    }, 100),
     makeConversion() {
       this.convertCurrency({
         fromCurrency: this.fromCurrency,

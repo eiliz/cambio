@@ -1,3 +1,5 @@
+import status from "@/status";
+
 export default {
   currencies(state) {
     return state.currencies;
@@ -33,6 +35,15 @@ export default {
     return state.status === "ERROR";
   },
   chartData(state) {
-    return state.chartData;
+    return state.chart.data;
+  },
+  chartDataCompleted(state) {
+    return state.chart.status === status.completed;
+  },
+  chartDataLoading(state) {
+    return state.chart.status === status.loading;
+  },
+  chartDataFailed(state) {
+    return state.chart.status === status.failed;
   }
 };

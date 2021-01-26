@@ -32,10 +32,7 @@ export default {
     this.fetchAllSupportedCurrencies();
   },
   methods: {
-    ...mapActions(["fetchAllSupportedCurrencies"]),
-    async getRate() {
-      this.rates = await this.$currencyService.getLatestRatesForCurrency("RON");
-    }
+    ...mapActions(["fetchAllSupportedCurrencies"])
   }
 };
 </script>
