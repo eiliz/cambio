@@ -1,7 +1,10 @@
 <template>
   <div>
     <converter>
-      <converter-results :data="conversionResult"></converter-results
+      <converter-results
+        :data="conversionResult"
+        class="mt-8"
+      ></converter-results
     ></converter>
 
     <currency-rates-chart></currency-rates-chart>

@@ -1,11 +1,13 @@
 import apiStatus from "@/api/constants/apiStatus";
 import { format } from "date-fns";
 
+const favorites = localStorage.getItem("cambioFavorites");
+
 export default {
   // This is the list of all the currencies the API used supports
   currencies: [],
-  fromCurrency: null,
-  toCurrency: null,
+  fromCurrency: "EUR",
+  toCurrency: "USD",
   fromAmount: 1,
   toAmount: 1,
   rate: 1,
@@ -14,5 +16,5 @@ export default {
     status: apiStatus.INITIAL,
     data: null
   },
-  favorites: new Set()
+  favorites: favorites ? JSON.parse(favorites) : []
 };

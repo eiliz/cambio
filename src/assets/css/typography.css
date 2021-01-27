@@ -30,3 +30,16 @@ h5 {
 h6 {
   @apply text-lg;
 }
+
+a,
+a:active {
+  transition: color 0.25s;
+}
+
+a:hover {
+  @apply text-green-500;
+}
+
+a:visited {
+  @apply text-indigo-500;
+}

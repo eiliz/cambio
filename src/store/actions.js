@@ -21,33 +21,25 @@ export default {
       console.log(err);
     }
   },
-  async convertCurrency(
-    { state, commit, dispatch },
-    { fromCurrency, toCurrency }
-  ) {
+  async convertCurrency({ state, commit, dispatch }) {
     try {
       const response = await currencyApi.getRates({
-        base: fromCurrency,
+        base: state.fromCurrency,
         date: state.date
       });
 
       const { rates, date } = response.data;
       const toAmount = (
-        rates[toCurrency] * parseFloat(state.fromAmount)
+        rates[state.toCurrency] * parseFloat(state.fromAmount)
       ).toFixed(2);
 
       commit("SET_CONVERSION", {
-        fromCurrency,
-        toCurrency,
         toAmount,
-        rate: rates[toCurrency],
+        rate: rates[state.toCurrency],
         date
       });
 
-      dispatch("fetchDataForChart", {
-        fromCurrency,
-        toCurrency
-      });
+      dispatch("fetchDataForChart");
     } catch (error) {
       console.log(error);
     }
@@ -55,7 +47,7 @@ export default {
   reverseConversion({ commit }) {
     commit("SET_REVERSE_CONVERSION");
   },
-  async fetchDataForChart({ commit }, { fromCurrency, toCurrency }) {
+  async fetchDataForChart({ state, commit }) {
     try {
       commit("SET_CHART_STATUS", apiStatus.PENDING);
 
@@ -72,7 +64,7 @@ export default {
       const {
         data: { rates }
       } = await currencyApi.getRatesForPeriod({
-        base: fromCurrency,
+        base: state.fromCurrency,
         startAt: oneWeekAgo,
         endAt: currentDate
       });
@@ -86,7 +78,7 @@ export default {
         [rates[key]].map(item => {
           chartData.push({
             date: newDate,
-            value: item[toCurrency].toFixed(2)
+            value: item[state.toCurrency].toFixed(2)
           });
         });
       }
@@ -104,8 +96,23 @@ export default {
       console.log(error);
     }
   },
-  makeFavorite({ commit }, payload) {
-    const stringPayload = JSON.stringify(payload);
-    commit("SET_FAVORITES", stringPayload);
+  onFavorite({ state, commit, getters }) {
+    const currentCurrencyPair = JSON.stringify(getters.getCurrentCurrencyPair);
+
+    if (getters.isPairInFavorites) {
+      commit(
+        "SET_FAVORITES",
+        state.favorites.filter(entry => entry !== currentCurrencyPair)
+      );
+
+      return;
+    }
+
+    commit("SET_FAVORITES", [...state.favorites, currentCurrencyPair]);
+  },
+  setCurrentCurrencies({ commit, dispatch }, { fromCurrency, toCurrency }) {
+    commit("SET_FROM_CURRENCY", fromCurrency);
+    commit("SET_TO_CURRENCY", toCurrency);
+    dispatch("convertCurrency");
   }
 };

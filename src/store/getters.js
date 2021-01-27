@@ -11,6 +11,7 @@ export default {
       rate,
       date
     } = state;
+
     return {
       fromCurrency,
       toCurrency,
@@ -27,9 +28,22 @@ export default {
     return state.chart.status;
   },
   getFavorites(state) {
-    return state.getFavorites;
+    return [...state.favorites].map(JSON.parse);
   },
-  hasFavorites(state) {
-    return state.favorites && state.favorites.length > 0;
+  getCurrentCurrencyPair(state) {
+    return {
+      fromCurrency: state.fromCurrency,
+      toCurrency: state.toCurrency
+    };
+  },
+  isPairInFavorites(state) {
+    return state.favorites.some(
+      entry =>
+        entry ===
+        JSON.stringify({
+          fromCurrency: state.fromCurrency,
+          toCurrency: state.toCurrency
+        })
+    );
   }
 };

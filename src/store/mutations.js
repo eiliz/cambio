@@ -2,9 +2,7 @@ export default {
   SET_CURRENCIES(state, payload) {
     state.currencies = payload;
   },
-  SET_CONVERSION(state, { fromCurrency, toCurrency, toAmount, rate }) {
-    state.fromCurrency = fromCurrency;
-    state.toCurrency = toCurrency;
+  SET_CONVERSION(state, { toAmount, rate }) {
     state.toAmount = toAmount;
     state.rate = rate;
   },
@@ -20,6 +18,12 @@ export default {
   SET_TO_AMOUNT(state, amount) {
     state.toAmount = amount;
   },
+  SET_FROM_CURRENCY(state, currency) {
+    state.fromCurrency = currency;
+  },
+  SET_TO_CURRENCY(state, currency) {
+    state.toCurrency = currency;
+  },
   SET_DATE(state, date) {
     state.date = date;
   },
@@ -30,10 +34,8 @@ export default {
     state.chart.status = status;
   },
   SET_FAVORITES(state, payload) {
-    state.favorites.add(payload);
-    localStorage.setItem(
-      "cambioFavorites",
-      JSON.stringify([...state.favorites])
-    );
+    state.favorites = payload;
+
+    localStorage.setItem("cambioFavorites", JSON.stringify(state.favorites));
   }
 };

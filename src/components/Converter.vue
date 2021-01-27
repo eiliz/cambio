@@ -1,11 +1,23 @@
 <template>
   <div class="bg-white rounded-lg mx-auto px-3 md:px-6 py-6 mb-6 shadow-sm">
-    <calendar
-      v-model="conversionDate"
-      @change="makeConversion"
-      :disabled-date="disableDatesFromTomorrow"
-      class="ml-auto"
-    ></calendar>
+    <div class="flex justify-end mb-6">
+      <h4 class="mr-auto">Convert currency</h4>
+      <a @click="onFavorite" class="flex text-xs items-center cursor-pointer">
+        <Star
+          :class="[
+            isPairInFavorites ? 'text-yellow-500 fill-current' : 'text-gray-500'
+          ]"
+          class="pr-1 stroke-current cursor-pointer"
+        />
+        {{ isPairInFavorites ? "Remove favorite" : "Add to favorites" }}
+      </a>
+      <calendar
+        v-model="conversionDate"
+        @change="makeConversion"
+        :disabled-date="disableDatesFromTomorrow"
+        class="ml-8"
+      ></calendar>
+    </div>
 
     <div class="flex flex-wrap justify-between">
       <div>
@@ -72,9 +84,6 @@
         </div>
       </div>
     </div>
-
-    <div><Star @click="onMakeFavorite" /></div>
-
     <slot></slot>
   </div>
 </template>
@@ -94,13 +103,27 @@ export default {
   },
   data() {
     return {
-      date: null,
-      fromCurrency: "EUR",
-      toCurrency: "USD"
+      date: null
     };
   },
   computed: {
-    ...mapGetters(["currencies"]),
+    ...mapGetters(["currencies", "isPairInFavorites"]),
+    fromCurrency: {
+      get() {
+        return this.$store.state.fromCurrency;
+      },
+      set(currency) {
+        this.$store.commit("SET_FROM_CURRENCY", currency);
+      }
+    },
+    toCurrency: {
+      get() {
+        return this.$store.state.toCurrency;
+      },
+      set(currency) {
+        this.$store.commit("SET_TO_CURRENCY", currency);
+      }
+    },
     fromAmount: {
       get() {
         return this.$store.state.fromAmount;
@@ -133,7 +156,7 @@ export default {
     this.makeConversion();
   },
   methods: {
-    ...mapActions(["convertCurrency", "reverseConversion", "makeFavorite"]),
+    ...mapActions(["convertCurrency", "reverseConversion", "onFavorite"]),
     makeConversionDebounced: debounce(function(event) {
       const regex = /[0-9.,]/g;
 
@@ -141,22 +164,13 @@ export default {
         return;
       }
 
-      this.makeConversion(event);
+      this.makeConversion();
     }, 250),
     makeConversion() {
-      this.convertCurrency({
-        fromCurrency: this.fromCurrency,
-        toCurrency: this.toCurrency
-      });
+      this.convertCurrency();
     },
     disableDatesFromTomorrow(date) {
       return date > new Date();
-    },
-    onMakeFavorite() {
-      this.makeFavorite({
-        fromCurrency: this.fromCurrency,
-        toCurrency: this.toCurrency
-      });
     }
   }
 };
