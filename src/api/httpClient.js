@@ -8,7 +8,7 @@ const throttleConfig = {
 export default axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
   adapter: throttleAdapterEnhancer(axios.defaults.adapter, throttleConfig),
-  timeout: 1000,
+  timeout: 3000,
   headers: {
     "Content-Type": "application/json"
   }

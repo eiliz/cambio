@@ -10,7 +10,7 @@
       @input="updateInput"
       v-bind="$attrs"
       v-on="$listeners"
-      class="border-2 border-gray-200 rounded px-4 font-bold h-10 mb-2 mr-2 w-36"
+      class="border-2 border-gray-200 focus:border-blue-200 focus:outline-none focus:ring rounded px-4 font-bold h-10 mb-2 mr-2 w-36"
     />
   </div>
 </template>

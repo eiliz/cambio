@@ -1,7 +1,7 @@
 <template>
-  <div class="sidebar bg-white rounded-lg shadow-sm px-6 py-6">
-    <div class="mb-8">
-      <h2 class="flex text-xl text-green-500">
+  <div class="sidebar">
+    <div class="bg-white rounded-lg shadow-sm px-6 py-6 mb-8">
+      <h2 class="flex items-center text-xl text-green-500">
         <Star /><span class="ml-2">Favorites</span>
       </h2>
 
@@ -9,7 +9,7 @@
         <li v-for="(fav, i) in getFavorites" :key="i">
           <a
             @click="onUseFavorite(fav)"
-            class="text-bold text-sm cursor-pointer"
+            class="text-bold text-sm cursor-pointer text-gray-700"
             >{{ fav.fromCurrency }} - {{ fav.toCurrency }}</a
           >
         </li>

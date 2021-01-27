@@ -1,39 +1,41 @@
+import * as types from "./types";
+
 export default {
-  SET_CURRENCIES(state, payload) {
+  [types.SET_CURRENCIES](state, payload) {
     state.currencies = payload;
   },
-  SET_CONVERSION(state, { toAmount, rate }) {
+  [types.SET_CONVERSION](state, { toAmount, rate }) {
     state.toAmount = toAmount;
     state.rate = rate;
   },
-  SET_REVERSE_CONVERSION(state) {
+  [types.SET_REVERSE_CONVERSION](state) {
     state.fromAmount = (parseFloat(state.toAmount) / state.rate).toFixed(2);
   },
-  SET_STATUS(state, status) {
-    state.status = status;
-  },
-  SET_FROM_AMOUNT(state, amount) {
+  [types.SET_FROM_AMOUNT](state, amount) {
     state.fromAmount = amount;
   },
-  SET_TO_AMOUNT(state, amount) {
+  [types.SET_TO_AMOUNT](state, amount) {
     state.toAmount = amount;
   },
-  SET_FROM_CURRENCY(state, currency) {
+  [types.SET_FROM_CURRENCY](state, currency) {
     state.fromCurrency = currency;
   },
-  SET_TO_CURRENCY(state, currency) {
+  [types.SET_TO_CURRENCY](state, currency) {
     state.toCurrency = currency;
   },
-  SET_DATE(state, date) {
+  [types.SET_DATE](state, date) {
     state.date = date;
   },
-  SET_CHART_DATA(state, data) {
+  [types.SET_PERIOD_FOR_CHART](state, period) {
+    state.periodForChart = period;
+  },
+  [types.SET_CHART_DATA](state, data) {
     state.chart.data = data;
   },
-  SET_CHART_STATUS(state, status) {
+  [types.SET_CHART_STATUS](state, status) {
     state.chart.status = status;
   },
-  SET_FAVORITES(state, payload) {
+  [types.SET_FAVORITES](state, payload) {
     state.favorites = payload;
 
     localStorage.setItem("cambioFavorites", JSON.stringify(state.favorites));

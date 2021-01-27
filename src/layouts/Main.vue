@@ -1,10 +1,10 @@
 <template>
   <div>
     <app-header></app-header>
-    <div class="lg:container flex mx-auto py-8">
-      <router-view class="w-full lg:w-3/4 px-3 md:px-6" />
+    <div class="lg:container grid grid-cols-4 mx-auto py-8 px-3 md:px-6 gap-6">
+      <router-view class="col-span-4 md:col-span-3" />
 
-      <app-sidebar class="hidden lg:block md:w-1/4"></app-sidebar>
+      <app-sidebar class="col-span-4 md:col-span-1"></app-sidebar>
     </div>
   </div>
 </template>
