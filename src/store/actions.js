@@ -4,6 +4,11 @@ import * as types from "./types";
 import { format } from "date-fns";
 import { subDays, subWeeks, subMonths } from "date-fns";
 
+// I've stored the date format that the exchangeratesapi.io API requires and
+// reuse it in multiple place so that it's easy to update it in case it needs to
+// be changed.
+import { dateFormat as apiDateFormat } from "@/api/constants/dateFormat";
+
 export default {
   async fetchAllSupportedCurrencies({ commit }) {
     try {
@@ -27,15 +32,16 @@ export default {
         date: state.date
       });
 
-      const { rates, date } = response.data;
+      const { rates } = response.data;
+      const rateForToCurrency = rates[state.toCurrency];
+
       const toAmount = (
-        rates[state.toCurrency] * parseFloat(state.fromAmount)
+        rateForToCurrency * parseFloat(state.fromAmount)
       ).toFixed(2);
 
       commit(types.SET_CONVERSION, {
         toAmount,
-        rate: rates[state.toCurrency],
-        date
+        rate: rateForToCurrency
       });
 
       dispatch("fetchDataForChart");
@@ -51,16 +57,16 @@ export default {
 
       switch (state.periodForChart) {
         case "week":
-          startAt = format(subWeeks(new Date(state.date), 1), "yyyy-MM-dd");
+          startAt = format(subWeeks(new Date(state.date), 1), apiDateFormat);
           break;
         case "month":
-          startAt = format(subMonths(new Date(state.date), 1), "yyyy-MM-dd");
+          startAt = format(subMonths(new Date(state.date), 1), apiDateFormat);
           break;
         default:
-          startAt = format(subDays(new Date(state.date), 1), "yyyy-MM-dd");
+          startAt = format(subDays(new Date(state.date), 1), apiDateFormat);
       }
 
-      const endAt = format(new Date(state.date), "yyyy-MM-dd");
+      const endAt = format(new Date(state.date), apiDateFormat);
 
       const {
         data: { rates }
@@ -79,6 +85,9 @@ export default {
         return new Date(a) - new Date(b);
       });
 
+      // The dates have to be sorted because Object.keys does not guarantee it
+      // maintains the same order as the one received from the API response so
+      // most of the time the dates are shuffled.
       sortedDates.forEach(date => {
         chartData.labels.push(format(new Date(date), "dd MMM"));
         chartData.values.push(rates[date][state.toCurrency]);

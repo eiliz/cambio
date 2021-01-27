@@ -45,6 +45,8 @@
       </div>
 
       <div class="flex">
+        <!-- When the user types in the second input, I don't make another call
+            to the API to get the rates again, instead I use the stored rate from the first call and do a reverse conversion. -->
         <base-input
           v-model="toAmount"
           @keyup="reverseConversion"
