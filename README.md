@@ -117,7 +117,9 @@ track mutations in vue dev tools was helpful.
 
 Otherwise lifting up state in the component tree can be better pattern. Another
 solution would be using a stateful service with Vue observable or upgrading to
-Vue3 which thanks to its setup function makes the usage of Vuex much less needed.
+Vue3 which thanks to its setup function makes the usage of Vuex much less
+needed.
+
 
 ### Project setup
 ```
