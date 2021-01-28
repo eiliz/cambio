@@ -1,8 +1,12 @@
 <template>
   <div>
-    <label v-if="label" :for="id" class="text-gray-500 text-xs">{{
-      label
-    }}</label>
+    <label
+      v-if="label"
+      :for="id"
+      :class="{ 'sr-only': hideLabel }"
+      class="text-gray-500 text-xs"
+      >{{ label }}</label
+    >
 
     <input
       :type="type"
@@ -10,7 +14,8 @@
       @input="updateInput"
       v-bind="$attrs"
       v-on="$listeners"
-      class="border-2 border-gray-200 focus:border-blue-200 focus:outline-none focus:ring rounded px-4 font-bold h-10 mb-2 mr-2 w-36"
+      :placeholder="placeholder"
+      class="border-2 border-gray-200 focus:border-blue-200 focus:outline-none focus:ring rounded px-4 font-bold h-10 w-36"
     />
   </div>
 </template>
@@ -31,6 +36,14 @@ export default {
     label: {
       type: String,
       default: ""
+    },
+    hideLabel: {
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      type: String,
+      default: "Type"
     },
     value: {
       type: [String, Number],

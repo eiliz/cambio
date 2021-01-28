@@ -3,24 +3,33 @@
     <div class="flex justify-end items-center mb-8">
       <h4 class="mr-auto">Convert currency</h4>
       <a @click="onFavorite" class="flex text-sm items-center cursor-pointer">
-        <Star :class="[isPairInFavorites ? 'fill-current' : '']" class="mr-1" />
-        {{ isPairInFavorites ? "Remove" : "Save" }}
+        <Star
+          :class="[isPairInFavorites ? 'fill-current' : '']"
+          class="md:mr-1"
+        />
+        <span class="hidden md:block">{{
+          isPairInFavorites ? "Remove" : "Save"
+        }}</span>
       </a>
       <calendar
         v-model="conversionDate"
         @change="makeConversion"
         :disabled-date="disableDatesFromTomorrow"
-        class="ml-8"
+        class="ml-4 md:ml-8"
       ></calendar>
     </div>
 
-    <div class="flex flex-wrap">
-      <div class="flex mr-12">
+    <div class="lg:flex lg:items-center">
+      <div class="flex justify-center">
         <base-input
           v-model="fromAmount"
           @keyup="makeConversionDebounced"
+          label="From currency"
+          :hide-label="true"
+          placeholder="Type value"
           type="number"
           id="fromAmount"
+          class="mr-2"
         />
 
         <Select
@@ -44,14 +53,24 @@
         </Select>
       </div>
 
-      <div class="flex">
+      <div
+        class="transform rotate-90 w-5 h-5 mx-auto my-2 lg:rotate-0 lg:w-7 lg:h-7 lg:mx-8 lg:my-0"
+      >
+        <switch-horizontal class="text-gray-500"></switch-horizontal>
+      </div>
+
+      <div class="flex justify-center">
         <!-- When the user types in the second input, I don't make another call
             to the API to get the rates again, instead I use the stored rate from the first call and do a reverse conversion. -->
         <base-input
           v-model="toAmount"
           @keyup="reverseConversion"
+          label="To currency"
+          :hide-label="true"
+          placeholder="Type value"
           type="number"
           id="fromAmount"
+          class="mr-2"
         />
 
         <Select
@@ -86,12 +105,14 @@ import debounce from "lodash.debounce";
 import Select from "@/components/common/Select";
 import Calendar from "@/components/common/Calendar";
 import Star from "@/assets/svg/star.svg";
+import SwitchHorizontal from "@/assets/svg/switch-horizontal.svg";
 
 export default {
   components: {
     Select,
     Calendar,
-    Star
+    Star,
+    SwitchHorizontal
   },
   data() {
     return {
