@@ -13,7 +13,7 @@
       </a>
       <calendar
         v-model="conversionDate"
-        @change="makeConversion"
+        @change="fetchRatesForCurrentPeriod"
         :disabled-date="disableDatesFromTomorrow"
         class="ml-4 md:ml-8"
       ></calendar>
@@ -23,7 +23,7 @@
       <div class="flex justify-center">
         <base-input
           v-model="fromAmount"
-          @keyup="makeConversionDebounced"
+          @keyup="calculateAmountDebounced"
           label="From currency"
           :hide-label="true"
           placeholder="Type value"
@@ -35,7 +35,7 @@
         <Select
           :options="currencies"
           v-model="fromCurrency"
-          @input="makeConversion"
+          @input="onCurrencyChange"
           :searchable="false"
           class="adyen"
         >
@@ -76,7 +76,7 @@
         <Select
           :options="currencies"
           v-model="toCurrency"
-          @input="makeConversion"
+          @input="onCurrencyChange"
           :searchable="false"
           class="adyen"
         >
@@ -142,9 +142,6 @@ export default {
         return this.$store.state.fromAmount;
       },
       set(amount) {
-        if (isNaN(parseFloat(amount))) {
-          return;
-        }
         this.$store.commit("SET_FROM_AMOUNT", amount);
       }
     },
@@ -165,28 +162,30 @@ export default {
       }
     }
   },
-  mounted() {
-    this.makeConversion();
+  async created() {
+    await this.fetchAllSupportedCurrencies();
+    await this.fetchRatesForCurrentPeriod();
+    await this.calculateConversionResult();
   },
   methods: {
-    ...mapActions(["convertCurrency", "onFavorite"]),
+    ...mapActions([
+      "onFavorite",
+      "fetchRatesForCurrentPeriod",
+      "fetchAllSupportedCurrencies",
+      "calculateConversionResult"
+    ]),
     ...mapMutations({
       reverseConversion: types.SET_REVERSE_CONVERSION
     }),
-    makeConversionDebounced: debounce(function(event) {
-      const regex = /[0-9.,]/g;
-
-      if (!regex.test(event.key)) {
-        return;
-      }
-
-      this.makeConversion();
-    }, 250),
-    makeConversion() {
-      this.convertCurrency();
-    },
+    calculateAmountDebounced: debounce(function() {
+      this.calculateConversionResult();
+    }, 150),
     disableDatesFromTomorrow(date) {
       return date > new Date();
+    },
+    async onCurrencyChange() {
+      await this.fetchRatesForCurrentPeriod();
+      await this.calculateConversionResult();
     }
   }
 };

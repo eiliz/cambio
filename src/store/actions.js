@@ -10,6 +10,8 @@ import { subDays, subWeeks, subMonths } from "date-fns";
 import { dateFormat as apiDateFormat } from "@/api/constants/dateFormat";
 
 export default {
+  // Gets and stores the list of all currencies that can be used in the
+  // converter.
   async fetchAllSupportedCurrencies({ commit }) {
     try {
       const {
@@ -25,34 +27,12 @@ export default {
       console.log(err);
     }
   },
-  async convertCurrency({ state, commit, dispatch }) {
+  // Fetches the rates for the current fromCurrency and the currently selected
+  // period, relative to the selected date. This way we can avoid making one API
+  // call for the selected date and one separate call to get the data for the
+  // selected period.
+  async fetchRatesForCurrentPeriod({ state, commit, dispatch }) {
     try {
-      const response = await currencyApi.getRates({
-        base: state.fromCurrency,
-        date: state.date
-      });
-
-      const { rates } = response.data;
-      const rateForToCurrency = rates[state.toCurrency];
-
-      const toAmount = (
-        rateForToCurrency * parseFloat(state.fromAmount)
-      ).toFixed(2);
-
-      commit(types.SET_CONVERSION, {
-        toAmount,
-        rate: rateForToCurrency
-      });
-
-      dispatch("fetchDataForChart");
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  async fetchDataForChart({ state, commit }) {
-    try {
-      commit(types.SET_CHART_STATUS, apiStatus.PENDING);
-
       let startAt;
 
       switch (state.periodForChart) {
@@ -76,35 +56,64 @@ export default {
         endAt
       });
 
-      const chartData = {
-        labels: [],
-        values: []
-      };
+      commit(types.SET_RATES, rates);
 
-      const sortedDates = Object.keys(rates).sort(function(a, b) {
-        return new Date(a) - new Date(b);
-      });
-
-      // The dates have to be sorted because Object.keys does not guarantee it
-      // maintains the same order as the one received from the API response so
-      // most of the time the dates are shuffled.
-      sortedDates.forEach(date => {
-        chartData.labels.push(format(new Date(date), "dd MMM"));
-        chartData.values.push(rates[date][state.toCurrency]);
-      });
-
-      commit(types.SET_CHART_DATA, chartData);
-      commit(types.SET_CHART_STATUS, apiStatus.SUCCESS);
+      dispatch("setDataForChart");
     } catch (error) {
-      commit(types.SET_CHART_DATA, null);
-      commit(types.SET_CHART_STATUS, apiStatus.ERROR);
       console.log(error);
     }
   },
-  updatePeriodForChart({ commit, dispatch }, period) {
+  calculateConversionResult({ state, commit }) {
+    if (isNaN(parseFloat(state.fromAmount))) {
+      commit(types.SET_TO_AMOUNT, "");
+      return;
+    }
+
+    // The API doesn't include weekend dates so if the selected date is one of
+    // those we instead use the most recent date the ones returned.
+    let dateForConversion = state.date;
+
+    if (!state.rates[state.date]) {
+      dateForConversion = Object.keys(state.rates).sort(function(a, b) {
+        return new Date(b) - new Date(a);
+      })[0];
+    }
+
+    const toAmount = (
+      state.rates[dateForConversion][state.toCurrency] *
+      parseFloat(state.fromAmount)
+    ).toFixed(2);
+
+    commit(types.SET_TO_AMOUNT, toAmount);
+  },
+  setDataForChart({ state, commit }) {
+    commit(types.SET_CHART_STATUS, apiStatus.PENDING);
+
+    const chartData = {
+      labels: [],
+      values: []
+    };
+
+    const sortedDates = Object.keys(state.rates).sort(function(a, b) {
+      return new Date(a) - new Date(b);
+    });
+
+    // The dates have to be sorted because Object.keys does not guarantee it
+    // maintains the same order as the one received from the API response so
+    // most of the time the dates are shuffled.
+    sortedDates.forEach(date => {
+      chartData.labels.push(format(new Date(date), "dd MMM"));
+      chartData.values.push(state.rates[date][state.toCurrency]);
+    });
+    // console.log(chartData);
+
+    commit(types.SET_CHART_DATA, chartData);
+    commit(types.SET_CHART_STATUS, apiStatus.SUCCESS);
+  },
+  async updatePeriodForChart({ commit, dispatch }, period) {
     commit(types.SET_PERIOD_FOR_CHART, period);
 
-    dispatch("fetchDataForChart");
+    await dispatch("fetchRatesForCurrentPeriod");
   },
   onFavorite({ state, commit, getters }) {
     const currentCurrencyPair = JSON.stringify(getters.getCurrentCurrencyPair);
@@ -122,9 +131,13 @@ export default {
     // If it does not exist, add it
     commit(types.SET_FAVORITES, [...state.favorites, currentCurrencyPair]);
   },
-  setCurrentCurrencies({ commit, dispatch }, { fromCurrency, toCurrency }) {
+  async setCurrentCurrencies(
+    { commit, dispatch },
+    { fromCurrency, toCurrency }
+  ) {
     commit(types.SET_FROM_CURRENCY, fromCurrency);
     commit(types.SET_TO_CURRENCY, toCurrency);
-    dispatch("convertCurrency");
+    await dispatch("fetchRatesForCurrentPeriod");
+    dispatch("calculateConversionResult");
   }
 };

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import Converter from "@/components/Converter";
 import ConverterResults from "@/components/ConverterResults";
 import CurrencyRatesChart from "@/components/CurrencyRatesChart";
@@ -27,12 +27,6 @@ export default {
   },
   computed: {
     ...mapGetters(["conversionResult"])
-  },
-  created() {
-    this.fetchAllSupportedCurrencies();
-  },
-  methods: {
-    ...mapActions(["fetchAllSupportedCurrencies"])
   }
 };
 </script>

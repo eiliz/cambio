@@ -2,8 +2,7 @@
   <div class="bg-white rounded-lg mx-auto p-6 shadow-sm">
     <LineChart
       v-if="isChartDataLoaded"
-      ref="chart"
-      :chart-data="chartData"
+      :chart-data="chartDataWithSettings"
       :height="200"
     ></LineChart>
 
@@ -41,9 +40,20 @@ import apiStatus from "@/api/constants/apiStatus";
 import { mapGetters, mapActions } from "vuex";
 import LineChart from "@/components/LineChart";
 
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "@/../tailwind.config.js";
+const {
+  theme: { colors }
+} = resolveConfig(tailwindConfig);
+
 export default {
   components: {
     LineChart
+  },
+  data() {
+    return {
+      chartDataWithSettings: null
+    };
   },
   computed: {
     ...mapGetters([
@@ -63,8 +73,40 @@ export default {
       return this.chartStatus === apiStatus.ERROR;
     }
   },
+  watch: {
+    // Due to limitations with the chart package I have to use this watcher and
+    // prepare the payload for the chart in this component.
+    // The problem is that the chart packages watches for changes on a chartData
+    // prop but it doesn't watch for deep changes so if I move the
+    // chartDataWithSettings state in the LineChart component instead, it
+    // doesn't pick up the changes from the store.
+    chartData: {
+      immediate: true,
+      handler: "refreshChartData"
+    }
+  },
   methods: {
-    ...mapActions(["updatePeriodForChart"])
+    ...mapActions(["updatePeriodForChart"]),
+    refreshChartData() {
+      this.chartDataWithSettings = {
+        labels: this.chartData.labels,
+        datasets: [
+          {
+            label: "Value: ",
+            backgroundColor: "rgba(16, 185, 129, 0.14)",
+            borderColor: colors.green[500],
+            pointBackgroundColor: colors.green[500],
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            lineTension: 0.4,
+            pointHoverBackgroundColor: colors.green[300],
+            pointBorderColor: colors.green[400],
+            data: this.chartData.values
+          }
+        ]
+      };
+    }
   }
 };
 </script>
