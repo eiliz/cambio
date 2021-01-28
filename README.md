@@ -1,5 +1,9 @@
 # cambio
 
+[Live demo on netlify](https://adoring-lovelace-1156cd.netlify.app/)
+
+![cambio](./cambio.png?raw=true)
+
 ## Features
 
 Cambio uses the exchangeratesapi.io API to perform currency conversion and plot
