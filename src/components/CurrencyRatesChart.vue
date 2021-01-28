@@ -1,17 +1,9 @@
 <template>
   <div class="bg-white rounded-lg mx-auto p-6 shadow-sm">
-    <LineChart
-      v-if="isChartDataLoaded"
-      :chart-data="chartDataWithSettings"
-      :height="200"
-    ></LineChart>
+    <LineChart :chart-data="chartDataWithSettings" :height="200"></LineChart>
 
-    <div v-if="isChartPending" class="flex justify-center">
+    <div v-if="isDataPending" class="flex justify-center">
       <base-spinner></base-spinner>
-    </div>
-
-    <div v-if="isChartFailed" class="flex justify-center">
-      There was a problem with your request
     </div>
 
     <div class="mt-8">
@@ -58,25 +50,19 @@ export default {
   computed: {
     ...mapGetters([
       "chartData",
-      "chartStatus",
       "isChartPeriodOneDay",
       "isChartPeriodOneWeek",
-      "isChartPeriodOneMonth"
+      "isChartPeriodOneMonth",
+      "ratesStatus"
     ]),
-    isChartDataLoaded() {
-      return this.chartStatus === apiStatus.SUCCESS;
-    },
-    isChartPending() {
-      return this.chartStatus === apiStatus.PENDING;
-    },
-    isChartFailed() {
-      return this.chartStatus === apiStatus.ERROR;
+    isDataPending() {
+      return this.ratesStatus === apiStatus.PENDING;
     }
   },
   watch: {
     // Due to limitations with the chart package I have to use this watcher and
     // prepare the payload for the chart in this component.
-    // The problem is that the chart packages watches for changes on a chartData
+    // The problem is that the chart package watches for changes on a chartData
     // prop but it doesn't watch for deep changes so if I move the
     // chartDataWithSettings state in the LineChart component instead, it
     // doesn't pick up the changes from the store.

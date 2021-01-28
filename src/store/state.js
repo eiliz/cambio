@@ -11,12 +11,10 @@ export default {
   fromAmount: 1,
   toAmount: 1,
   rates: {},
+  ratesStatus: apiStatus.INITIAL,
   date: format(new Date(), "yyyy-MM-dd"),
   dateForConversion: format(new Date(), "yyyy-MM-dd"),
   periodForChart: "week",
-  chart: {
-    status: apiStatus.INITIAL,
-    data: { labels: [], values: [] }
-  },
+  chartData: { labels: [], values: [] },
   favorites: favorites ? JSON.parse(favorites) : []
 };

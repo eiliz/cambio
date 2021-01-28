@@ -13,7 +13,11 @@ export default {
     } = state;
 
     const rates = state.rates[date] || state.rates[dateForConversion];
-    const rate = rates ? rates[toCurrency] : null;
+    // If we select the same currency for both options, rates[toCurrency] is
+    // going to be undefined because the API response doesn't include an entry
+    // for the base rate in the rates payload so we set it to 1 for this case
+    // where both currencies are the same.
+    const rate = rates?.[toCurrency] || 1;
 
     return {
       fromCurrency,
@@ -24,11 +28,11 @@ export default {
       date
     };
   },
-  chartData(state) {
-    return state.chart.data;
+  ratesStatus(state) {
+    return state.ratesStatus;
   },
-  chartStatus(state) {
-    return state.chart.status;
+  chartData(state) {
+    return state.chartData;
   },
   isChartPeriodOneDay(state) {
     return state.periodForChart === "day";

@@ -12,6 +12,8 @@ export const SET_TO_CURRENCY = "SET_TO_CURRENCY";
 
 export const SET_RATES = "SET_RATES";
 
+export const SET_RATES_STATUS = "SET_RATES_STATUS";
+
 export const SET_DATE = "SET_DATE";
 
 export const SET_DATE_FOR_CONVERSION = "SET_DATE_FOR_CONVERSION";
@@ -19,7 +21,5 @@ export const SET_DATE_FOR_CONVERSION = "SET_DATE_FOR_CONVERSION";
 export const SET_PERIOD_FOR_CHART = "SET_PERIOD_FOR_CHART";
 
 export const SET_CHART_DATA = "SET_CHART_DATA";
-
-export const SET_CHART_STATUS = "SET_CHART_STATUS";
 
 export const SET_FAVORITES = "SET_FAVORITES";

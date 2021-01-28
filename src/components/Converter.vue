@@ -94,6 +94,11 @@
         </Select>
       </div>
     </div>
+
+    <div v-if="failedLoadingRates" class="my-4 text-red-500 font-semibold">
+      There was a problem with your request
+    </div>
+
     <slot></slot>
   </div>
 </template>
@@ -101,6 +106,7 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import * as types from "@/store/types";
+import apiStatus from "@/api/constants/apiStatus";
 import debounce from "lodash.debounce";
 import Select from "@/components/common/Select";
 import Calendar from "@/components/common/Calendar";
@@ -120,7 +126,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currencies", "isPairInFavorites"]),
+    ...mapGetters(["currencies", "isPairInFavorites", "ratesStatus"]),
     fromCurrency: {
       get() {
         return this.$store.state.fromCurrency;
@@ -160,6 +166,9 @@ export default {
       set(date) {
         this.$store.commit("SET_DATE", date);
       }
+    },
+    failedLoadingRates() {
+      return this.ratesStatus === apiStatus.ERROR;
     }
   },
   async created() {

@@ -32,6 +32,9 @@ export default {
   [types.SET_RATES](state, rates) {
     state.rates = rates;
   },
+  [types.SET_RATES_STATUS](state, status) {
+    state.ratesStatus = status;
+  },
   [types.SET_FROM_CURRENCY](state, currency) {
     state.fromCurrency = currency;
   },
@@ -48,10 +51,7 @@ export default {
     state.periodForChart = period;
   },
   [types.SET_CHART_DATA](state, data) {
-    state.chart.data = data;
-  },
-  [types.SET_CHART_STATUS](state, status) {
-    state.chart.status = status;
+    state.chartData = data;
   },
   [types.SET_FAVORITES](state, payload) {
     state.favorites = payload;

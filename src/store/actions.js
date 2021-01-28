@@ -24,7 +24,7 @@ export default {
 
       commit(types.SET_CURRENCIES, currencies);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   },
   // Fetches the rates for the current fromCurrency and the currently selected
@@ -32,6 +32,8 @@ export default {
   // call for the selected date and one separate call to get the data for the
   // selected period.
   async fetchRatesForCurrentPeriod({ state, commit, dispatch }) {
+    commit(types.SET_RATES_STATUS, apiStatus.PENDING);
+
     try {
       let startAt;
 
@@ -48,7 +50,7 @@ export default {
 
       const endAt = format(new Date(state.date), apiDateFormat);
 
-      const {
+      let {
         data: { rates }
       } = await currencyApi.getRatesForPeriod({
         base: state.fromCurrency,
@@ -56,7 +58,28 @@ export default {
         endAt
       });
 
+      /* If the user selected a non trading day for the date like a weekend day
+      or Christmas and a period of one day for the chart, the API will return an
+      empty object as the rates.
+      
+      In that case we make an extra call to another endpoint that gives us
+      the rate for the most recent trading day, as well as the date for it so
+      we can build the rates object to have the same shape as for the regular
+      API call with the date as the key and the actual rates as the values.
+       */
+      if (!Object.keys(rates).length) {
+        const { data: ratesForLastTradedDay } = await currencyApi.getRates({
+          base: state.fromCurrency,
+          date: format(new Date(state.date), apiDateFormat)
+        });
+
+        rates = {
+          [ratesForLastTradedDay.date]: ratesForLastTradedDay.rates
+        };
+      }
+
       commit(types.SET_RATES, rates);
+      commit(types.SET_RATES_STATUS, apiStatus.SUCCESS);
 
       // The API doesn't include weekend dates so if the selected date is one of
       // those we instead use the most recent date the ones returned.
@@ -72,12 +95,18 @@ export default {
 
       dispatch("setDataForChart");
     } catch (error) {
-      console.log(error);
+      commit(types.SET_RATES_STATUS, apiStatus.ERROR);
+      console.error(error);
     }
   },
   calculateConversionResult({ state, commit }) {
     if (isNaN(parseFloat(state.fromAmount))) {
       commit(types.SET_TO_AMOUNT, "");
+      return;
+    }
+
+    if (state.fromCurrency === state.toCurrency) {
+      commit(types.SET_TO_AMOUNT, state.fromAmount);
       return;
     }
 
@@ -91,8 +120,6 @@ export default {
     commit(types.SET_TO_AMOUNT, toAmount);
   },
   setDataForChart({ state, commit }) {
-    commit(types.SET_CHART_STATUS, apiStatus.PENDING);
-
     const chartData = {
       labels: [],
       values: []
@@ -107,12 +134,10 @@ export default {
     // most of the time the dates are shuffled.
     sortedDates.forEach(date => {
       chartData.labels.push(format(new Date(date), "dd MMM"));
-      chartData.values.push(state.rates[date][state.toCurrency]);
+      chartData.values.push(state.rates[date][state.toCurrency] || 1);
     });
-    // console.log(chartData);
 
     commit(types.SET_CHART_DATA, chartData);
-    commit(types.SET_CHART_STATUS, apiStatus.SUCCESS);
   },
   async updatePeriodForChart({ commit, dispatch }, period) {
     commit(types.SET_PERIOD_FOR_CHART, period);
@@ -136,9 +161,17 @@ export default {
     commit(types.SET_FAVORITES, [...state.favorites, currentCurrencyPair]);
   },
   async setCurrentCurrencies(
-    { commit, dispatch },
+    { state, commit, dispatch },
     { fromCurrency, toCurrency }
   ) {
+    // Don't do anything if the current currencies are already of the same values.
+    if (
+      state.fromCurrency === fromCurrency &&
+      state.toCurrency === toCurrency
+    ) {
+      return;
+    }
+
     commit(types.SET_FROM_CURRENCY, fromCurrency);
     commit(types.SET_TO_CURRENCY, toCurrency);
     await dispatch("fetchRatesForCurrentPeriod");
