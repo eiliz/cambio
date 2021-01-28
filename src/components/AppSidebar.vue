@@ -5,7 +5,7 @@
         <Star /><span class="ml-2">Favorites</span>
       </h2>
 
-      <ul v-if="getFavorites">
+      <ul v-if="getFavorites.length">
         <li v-for="(fav, i) in getFavorites" :key="i">
           <a
             @click="onUseFavorite(fav)"

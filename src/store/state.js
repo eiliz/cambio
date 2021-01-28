@@ -12,6 +12,7 @@ export default {
   toAmount: 1,
   rates: {},
   date: format(new Date(), "yyyy-MM-dd"),
+  dateForConversion: format(new Date(), "yyyy-MM-dd"),
   periodForChart: "week",
   chart: {
     status: apiStatus.INITIAL,

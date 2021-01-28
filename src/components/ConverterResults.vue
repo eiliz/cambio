@@ -1,7 +1,6 @@
 <template>
   <div class="text-green-700 text-sm">
-    1 {{ data.fromCurrency }} = {{ data.rate }}
-    {{ data.toCurrency }}
+    1 {{ data.fromCurrency }} = {{ data.rate }} {{ data.toCurrency }}
   </div>
 </template>
 

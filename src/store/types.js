@@ -14,6 +14,8 @@ export const SET_RATES = "SET_RATES";
 
 export const SET_DATE = "SET_DATE";
 
+export const SET_DATE_FOR_CONVERSION = "SET_DATE_FOR_CONVERSION";
+
 export const SET_PERIOD_FOR_CHART = "SET_PERIOD_FOR_CHART";
 
 export const SET_CHART_DATA = "SET_CHART_DATA";

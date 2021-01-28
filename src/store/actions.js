@@ -58,6 +58,18 @@ export default {
 
       commit(types.SET_RATES, rates);
 
+      // The API doesn't include weekend dates so if the selected date is one of
+      // those we instead use the most recent date the ones returned.
+      let dateForConversion = state.date;
+
+      if (!rates[state.date]) {
+        dateForConversion = Object.keys(rates).sort(function(a, b) {
+          return new Date(b) - new Date(a);
+        })[0];
+
+        commit("SET_DATE_FOR_CONVERSION", dateForConversion);
+      }
+
       dispatch("setDataForChart");
     } catch (error) {
       console.log(error);
@@ -69,19 +81,11 @@ export default {
       return;
     }
 
-    // The API doesn't include weekend dates so if the selected date is one of
-    // those we instead use the most recent date the ones returned.
-    let dateForConversion = state.date;
-
-    if (!state.rates[state.date]) {
-      dateForConversion = Object.keys(state.rates).sort(function(a, b) {
-        return new Date(b) - new Date(a);
-      })[0];
-    }
+    const rates =
+      state.rates[state.date] || state.rates[state.dateForConversion];
 
     const toAmount = (
-      state.rates[dateForConversion][state.toCurrency] *
-      parseFloat(state.fromAmount)
+      rates[state.toCurrency] * parseFloat(state.fromAmount)
     ).toFixed(2);
 
     commit(types.SET_TO_AMOUNT, toAmount);

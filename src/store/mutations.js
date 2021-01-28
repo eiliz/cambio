@@ -16,19 +16,11 @@ export default {
       return;
     }
 
-    // The API doesn't include weekend dates so if the selected date is one of
-    // those we instead use the most recent date the ones returned.
-    let dateForConversion = state.date;
-
-    if (!state.rates[state.date]) {
-      dateForConversion = Object.keys(state.rates).sort(function(a, b) {
-        return new Date(b) - new Date(a);
-      })[0];
-    }
+    const rates =
+      state.rates[state.date] || state.rates[state.dateForConversion];
 
     state.fromAmount = (
-      parseFloat(state.toAmount) /
-      state.rates[dateForConversion][state.toCurrency]
+      parseFloat(state.toAmount) / rates[state.toCurrency]
     ).toFixed(2);
   },
   [types.SET_FROM_AMOUNT](state, amount) {
@@ -48,6 +40,9 @@ export default {
   },
   [types.SET_DATE](state, date) {
     state.date = date;
+  },
+  [types.SET_DATE_FOR_CONVERSION](state, date) {
+    state.dateForConversion = date;
   },
   [types.SET_PERIOD_FOR_CHART](state, period) {
     state.periodForChart = period;

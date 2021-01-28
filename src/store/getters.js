@@ -8,9 +8,12 @@ export default {
       toCurrency,
       fromAmount,
       toAmount,
-      rate,
-      date
+      date,
+      dateForConversion
     } = state;
+
+    const rates = state.rates[date] || state.rates[dateForConversion];
+    const rate = rates ? rates[toCurrency] : null;
 
     return {
       fromCurrency,
