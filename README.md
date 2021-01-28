@@ -46,6 +46,15 @@ API.
 After the throttling duration has expired, hitting the same URL will results in
 actual calls across the network.
 
+I've also handled corner cases like for example when you select a non trading
+day like a weekend day or Christmas and the period for the chart is set to 1
+day. In that case the /history endpoint will return an empty object for the
+rates. So I'm checking the object and if's empty I'll make a second call to
+another endpoint the API provides that gives you the rates for the most recent
+trading day relative to the date you send. It also returns the date of that
+specific day and with these I can put together a rates object in the same shape
+that the hisory endpoint returns with the date as the key and the rates as the value.
+
 ## API
 
 Everything related to the API has its own folder and includes API states, the
@@ -59,10 +68,10 @@ this.$currencyApi.getRates({base, date})
 
 ### Handling API states for an improved UX
 
-• IDLE - Starting point
-• PENDING - An action is being performed
-• SUCCESS - An action finished successfully
-• ERROR - An action finished with an error
+- IDLE - Starting point
+- PENDING - An action is being performed
+- SUCCESS - An action finished successfully
+- ERROR - An action finished with an error
 
 ## Base and wrapper components
 
