@@ -47,7 +47,29 @@ export default {
       default: () => defaultOptions
     }
   },
+  computed: {
+    chartDataWithSettings() {
+      return {
+        labels: this.chartData.labels,
+        datasets: [
+          {
+            label: "Value: ",
+            backgroundColor: "rgba(16, 185, 129, 0.14)",
+            borderColor: colors.green[500],
+            pointBackgroundColor: colors.green[500],
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            lineTension: 0.4,
+            pointHoverBackgroundColor: colors.green[300],
+            pointBorderColor: colors.green[400],
+            data: this.chartData.values
+          }
+        ]
+      };
+    }
+  },
   mounted() {
-    this.renderChart(this.chartData, this.options);
+    this.renderChart(this.chartDataWithSettings, this.options);
   }
 };
